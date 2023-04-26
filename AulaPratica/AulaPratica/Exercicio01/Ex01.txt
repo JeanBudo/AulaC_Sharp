@@ -1,4 +1,0 @@
-﻿Você deve criar um sistema no qual o usuário entre com informações para criar seu personagem, este deve conter as seguintes informações: nome, nível, ataque, constituição, pontos de vida, velocidade. Após criar o personagem, o jogador deve explorar uma dungeon (criada em texto, conforme tópico 06 da aula 01) com no mínimo 5 salas e uma bifurcação de caminho. Sendo que a última opção de cada possível caminho seja uma batalha (não precisa programar a batalha, apenas o texto dizendo que ela começou contra X inimigos do tipo Y).
-Considere que: 
-A-	O nível do personagem sempre será 1.
-B-	Os pontos de vida são calculados da seguinte forma PV = (constituição + nível) *3;
