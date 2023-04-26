@@ -1,0 +1,76 @@
+﻿using System;
+using System.Globalization;
+
+
+namespace AulaPratica
+{
+
+    internal class Program
+    {
+
+
+
+        static void Main(string[] args)
+        {
+            //Dados da pessoa
+            string nomeCompleto;
+            int idade;
+            char sexo;
+            float peso;
+            double altura;
+            //Valoreas do IMC
+            double imc;
+            string resultadoImc;
+
+            Console.Write("Insira seu nome completo: ");
+            nomeCompleto = Console.ReadLine();
+            Console.Write("Insira sua idade: ");
+            idade = int.Parse(Console.ReadLine());
+            Console.Write("Sexo(M/F): ");
+            sexo = char.Parse(Console.ReadLine());
+            Console.Write("Insira seu peso: ");
+            peso = float.Parse(Console.ReadLine());
+            Console.Write("Insira sua altura: ");
+            altura = double.Parse(Console.ReadLine(), CultureInfo.InvariantCulture);
+
+            //Calcula IMC
+            imc = peso / (altura * altura);
+            Console.WriteLine(nomeCompleto + " seu IMC é de: " + imc.ToString("00.00", CultureInfo.InvariantCulture));
+
+            if (imc < 18.5)
+            {
+                resultadoImc = "Magreza";
+
+            }
+            else if (imc >= 18.5 && imc < 25)
+            {
+                resultadoImc = "Peso normal";
+            }
+            else if (imc >= 25 && imc < 30)
+            {
+                resultadoImc = "Sobrepeso";
+            }
+            else if (imc >= 30 && imc < 35)
+            {
+                resultadoImc = "Obesidade grau I";
+            }
+            else if (imc >= 35 && imc < 40)
+            {
+                resultadoImc = "Obesidade grau II";
+            }
+            else
+            {
+                resultadoImc = "Obesidade grau III";
+            }
+
+            Console.WriteLine("Seu IMC corresponde a: " + resultadoImc);
+
+
+
+
+
+
+        }
+    }
+
+}

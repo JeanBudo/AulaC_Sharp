@@ -1,0 +1,187 @@
+﻿using Microsoft.SqlServer.Server;
+using System;
+using System.Globalization;
+
+
+namespace AulaPratica
+{
+
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+
+            //Personagem principal
+            string playerName = "Rodrigo";
+            int playerLevel = 2;
+            int playersConstituition = 3;
+            int playerAttack = 2;
+            int playerHP = CalculateHP(playersConstituition, playerLevel);
+            int playerSpeed = 10;
+            //SuperAttack
+            int coolDown = 0;
+
+
+            //Inimigos
+            int totalOfEnemies = 4;
+            string[] enemiesNames = new string[totalOfEnemies];
+            int[] enemiesLevel = new int[totalOfEnemies];
+            int[] enemiesConstituition = new int[totalOfEnemies];
+            int[] enemiesAttack = new int[totalOfEnemies];
+            int[] enemiesHP = new int[totalOfEnemies];
+
+            for (int i = 0; i < enemiesLevel.Length; i++)
+            {
+                enemiesNames[i] = "Enemy" + (i + 1).ToString();
+                enemiesLevel[i] = 1;
+                enemiesConstituition[i] = 1;
+                enemiesAttack[i] = 1;
+                enemiesHP[i] = CalculateHP(enemiesConstituition[i], enemiesLevel[i]);
+                Console.WriteLine(enemiesNames[i] + ": " + enemiesHP[i]);
+            }
+
+            //variaveis do tabuleiro
+            bool gameOver = false;
+            string actionSelected;
+
+            #region
+            while (gameOver == false)
+            {
+                Console.WriteLine("Vez de: " + playerName);
+                Console.WriteLine("Pressione Q para atacar o inimigo mais próximo.");
+                CheckPlayerSuperAtaque();
+                Console.WriteLine("Pressione outra tecla para passar a vez.");
+                Console.Write("Seu comando: ");
+                actionSelected = Console.ReadLine();
+
+                if (actionSelected == "q" || actionSelected == "Q")
+                {
+                    AttackCloserEnemy();
+                }
+                else if (actionSelected == "s" || actionSelected == "S")
+                {
+                    SuperAttack();
+                }
+                else
+                {
+                    PassTurn();
+                }
+                CheckIsGameOver();
+                if (gameOver == true) { break; }
+                Console.WriteLine();
+
+                for(int i = 0; i < enemiesHP.Length; i++)
+                {
+                    AttackVsPlayer(enemiesNames[i], enemiesHP[i], enemiesLevel[i], enemiesAttack[i]);
+                    if (gameOver == true) { break; }
+                }
+            }
+            #endregion
+            Console.WriteLine("Obrigado por jogar!!!");
+            #region Aqui inicia meus métodos/função
+            int CalculateHP(int constituition, int level)
+            {
+                return (constituition + level) * 3;
+            }
+            void AttackCloserEnemy()
+            {
+                if (coolDown > 0)
+                {
+                    coolDown--;
+                }
+                int _damange = playerAttack + playerLevel;
+                for(int i = 0; i < enemiesHP.Length; i++)
+                {
+                    if (enemiesHP[i] > 0)
+                    {
+                        enemiesHP[i] -= _damange;
+                        Console.WriteLine(playerName + " atacou " + enemiesNames[i] + ":  ele recebeu " + _damange + " pontos de dano, ficando com HP= " + enemiesHP[i]);
+                        return;
+                    }
+                }
+            }
+            void PassTurn()
+            {
+                if (coolDown > 0)
+                {
+                    coolDown--;
+                }
+
+                Console.WriteLine("Passou o turno!");
+            }
+            void CheckIsGameOver()
+            {
+                int verifyWinner = 0;
+                for(int i = 0; i < enemiesHP.Length; i++)
+                {
+                    if (enemiesHP[i] <= 0)
+                    {
+                        verifyWinner++;
+                    }
+                }
+                if(verifyWinner == enemiesHP.Length)
+                {
+                    gameOver = true;
+                    Console.WriteLine();
+                    Console.WriteLine("Você ganhou!");
+                }
+
+              
+                if (playerHP <= 0)
+                {
+                    gameOver = true;
+                    Console.WriteLine();
+                    Console.WriteLine("Você perdeu!");
+
+
+                }
+            }
+            void AttackVsPlayer(string enemyName, int enemyHP, int enemyLevel, int enemyAttack)
+            {
+                //Vez do oponente
+                if (enemyHP > 0)
+                {
+                    int _enemyDamange = enemyLevel + enemyAttack;
+                    playerHP -= _enemyDamange;
+                    Console.WriteLine("***** " + enemyName + " atacou " + playerName + ": ele recebeu " + _enemyDamange + " pontos de dano, ficando com HP= " + playerHP);
+                    CheckIsGameOver();
+                }
+
+            }
+            void CheckPlayerSuperAtaque()
+            {
+                if (coolDown == 0)
+                {
+                    Console.WriteLine("Aperte S para usar um SUPER ATAQUE!!!");
+                }
+                else
+                {
+                    Console.WriteLine("Super ataque em ESPERA!");
+                }
+            }
+            void SuperAttack()
+            {
+                int _damange = playerAttack + playerLevel;
+                if (coolDown == 0)
+                {
+                    for(int i = 0; i < enemiesHP.Length; i++)
+                    {
+                        if (enemiesHP[i] > 0)
+                        {
+                            enemiesHP[i] -= _damange;
+                            Console.WriteLine(playerName + " atacou " + enemiesNames[i] + ":  ele recebeu " + _damange + " pontos de dano, ficando com HP= " + enemiesHP[i]);
+
+                        }
+                    }
+                    coolDown++;
+                }
+                else
+                {
+                    AttackCloserEnemy();
+                }
+            }
+            #endregion
+        }//Fim da Main
+    }
+
+}

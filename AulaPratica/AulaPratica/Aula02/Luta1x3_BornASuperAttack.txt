@@ -1,0 +1,235 @@
+﻿using Microsoft.SqlServer.Server;
+using System;
+using System.Globalization;
+
+
+namespace AulaPratica
+{
+    internal class Program
+    {
+
+
+
+        static void Main(string[] args)
+        {
+            //
+            string salaA = "Você esta na sala A";
+            string salaB = "Você esta na sala B";
+            string salaC = "Você esta na sala C";
+            string seletorDeSalas = "";
+            bool escolhendoSala = true;
+
+            //Personagem principal
+            string playerName = "Rodrigo";
+            int playerLevel = 1;
+            int playersConstituition = 3;
+            int playerAttack = 2;
+            int playerHP = CalculateHP(playersConstituition, playerLevel);
+            int playerSpeed = 10;
+            //SuperAtaque
+            int coolDown = 0;
+            //Inimigos
+            string[] enemiesNames = new string[3];
+            int[] enemiesLevel = new int[3];
+            int[] enemiesConstituition = new int[3];
+            int[] enemiesAttack = new int[3];
+            int[] enemiesHP = new int[3];
+            //setups
+            enemiesNames[0] = "EnemyA";
+            enemiesNames[1] = "EnemyB";
+            enemiesNames[2] = "EnemyC";
+
+            for (int i = 0; i < enemiesLevel.Length; i++)
+            {
+                enemiesLevel[i] = 1;
+                enemiesConstituition[i] = 1;
+                enemiesAttack[i] = 1;
+                enemiesHP[i] = CalculateHP(enemiesConstituition[i], enemiesLevel[i]);
+                Console.WriteLine(enemiesNames[i] + ": " + enemiesHP[i]);
+            }
+
+
+            //variaveis do tabuleiro
+            bool gameOver = false;
+            string actionSelected;
+
+            Console.Write("Aperte A para salaA ou B para salaB: ");
+            while (escolhendoSala == true)
+            {
+               
+                seletorDeSalas = Console.ReadLine();
+                if(seletorDeSalas=="A" || seletorDeSalas == "a")
+                {
+                      Console.WriteLine(salaA);
+                }
+                if (seletorDeSalas == "B" || seletorDeSalas == "b")
+                {
+                    Console.WriteLine(salaB);
+                }
+                if( seletorDeSalas == "A" || seletorDeSalas == "a"|| seletorDeSalas == "B" || seletorDeSalas == "b")
+                {
+                    Console.Write("Aperte C para avançar: ");
+                }
+                if(seletorDeSalas == "C" || seletorDeSalas == "c")
+                {
+                    escolhendoSala = false;
+                    Console.WriteLine(salaC);
+                    Console.WriteLine("Surge um grupo de inimigos");
+                }
+
+            }
+
+
+
+
+            while (!gameOver)
+            {
+                Console.WriteLine("Vez de: " + playerName);
+                Console.WriteLine("Pressione Q para atacar o oponente mais próximo!");
+                CheckPlayerSuperAtaque();
+                Console.WriteLine("Pressione outra tecla para passar a vez");
+                Console.Write("Seu comando: ");
+                actionSelected = Console.ReadLine();
+                if (actionSelected == "q" || actionSelected == "Q")
+                {
+                    AttackCloserEnemy();
+                }
+                else if (actionSelected == "s" || actionSelected == "S")
+                {
+                    SuperAttack();
+                }
+                else
+                {
+                    PassTurn();
+                }
+                //Verificação de vitoria!
+                CheckIsGameOVer();
+                if (gameOver == true) { break; }
+                Console.WriteLine();
+                //Vez do oponente
+                EnemiesBehavior();
+                //Verificação de vitoria!
+                CheckIsGameOVer();
+                if (gameOver == true) { break; }
+
+
+
+            }
+            Console.WriteLine("Obrigado por jogar!!!");
+
+
+
+            //Métodos
+
+
+            int CalculateHP(int constituition, int level)
+            {
+                return (constituition + level) * 3;
+            }
+            void AttackCloserEnemy()
+            {
+                int _damange = playerAttack + playerLevel;
+                for (int i = 0; i < enemiesHP.Length; i++)
+                {
+                    if (enemiesHP[i] > 0)
+                    {
+                        enemiesHP[i] -= _damange;
+                        Console.WriteLine(playerName + " atacou " + enemiesNames[i] + ":  ele recebeu " + _damange + " pontos de dano, ficando com HP= " + enemiesHP[i]);
+                        if (coolDown > 0) { coolDown--; }
+                        return;
+                    }
+                }
+
+
+            }
+            void SuperAttack()
+            {
+                int _damange = playerAttack + playerLevel;
+                if (coolDown == 0)
+                {
+                    for (int i = 0; i < enemiesHP.Length; i++)
+                    {
+                        if (enemiesHP[i] > 0)
+                        {
+                            enemiesHP[i] -= _damange;
+                            Console.WriteLine(playerName + " atacou " + enemiesNames[i] + ":  ele recebeu " + _damange + " pontos de dano, ficando com HP= " + enemiesHP[i]);
+
+                        }
+                    }
+                    coolDown++;
+                }
+                else
+                {
+                    AttackCloserEnemy();
+                }
+
+            }
+            void PassTurn()
+            {
+                Console.WriteLine("Passou o turno!");
+                if (coolDown > 0) { coolDown--; }
+            }
+            void CheckIsGameOVer()
+            {
+                int checkPlayerWin = 0;
+                foreach(int hp in enemiesHP)
+                {
+                    if (hp <= 0)
+                    {
+                        checkPlayerWin++;
+                    }
+
+                }
+                //Vitoria do player
+                if (checkPlayerWin == enemiesConstituition.Length)
+                {
+                    gameOver = true;
+                    Console.WriteLine();
+                    Console.WriteLine("Você ganhou!");
+                }
+                //Vitoria dos oponentes
+                if (playerHP <= 0)
+                {
+                    gameOver = true;
+                    Console.WriteLine();
+                    Console.WriteLine("Você perdeu!");
+                }
+            }
+            void EnemiesBehavior()
+            {
+                for (int i = 0; i < enemiesHP.Length; i++)
+                {
+                    AttackPlayer(enemiesNames[i], enemiesHP[i], enemiesLevel[i], enemiesAttack[i]);
+                }
+            }
+            void AttackPlayer(string enemyName, int enemyHP, int level, int attack)
+            {
+                if (enemyHP > 0)
+                {
+                    int _enemyDamange = attack + level;
+                    playerHP -= _enemyDamange;
+                    Console.WriteLine(enemyName + " atacou " + playerName + ": ele recebeu " + _enemyDamange + " pontos de dano, ficando com HP= " + playerHP);
+                    Console.WriteLine();
+                }
+
+
+            }
+            void CheckPlayerSuperAtaque()
+            {
+                if (coolDown == 0)
+                {
+                    Console.WriteLine("Pressione S para realizar um SUPER ATAQUE!");
+                }
+                else
+                {
+                    Console.WriteLine("Super Ataque em espera...");
+                }
+            }
+
+        }
+
+
+
+    }
+
+}
