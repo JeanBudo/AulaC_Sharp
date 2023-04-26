@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aula01\Entities\Character.cs" />
+    <Compile Include="Aula01\Enums\EnumCharType.cs" />
     <Compile Include="Aula03\Entities\Objetos\CdPlayStation.cs" />
     <Compile Include="Aula03\Entities\Objetos\SofaVelho.cs" />
     <Compile Include="Aula03\Entities\Objetos\TelevisaoLed.cs" />
