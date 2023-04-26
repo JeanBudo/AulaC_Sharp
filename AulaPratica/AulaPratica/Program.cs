@@ -1,6 +1,8 @@
 ﻿using AulaPratica.Aula01.Entities;
 using System;
 using System.Linq;
+using AulaPratica.Aula01.Enums;
+using System.Collections.Generic;
 
 
 
@@ -13,16 +15,20 @@ namespace AulaPratica
 
         static void Main(string[] args)
         {
+            
+            Character player = new Character("Player", 1, 3, 2, 20, EnumCharType.Player);
+            Character enemyA = new Character("EnemyA", 1, 1, 1, 15, EnumCharType.Enemy);
+            Character enemyB = new Character("EnemyB", 1, 1, 1, 15, EnumCharType.Enemy);
+            Character enemyC = new Character("EnemyC", 1, 1, 1, 15, EnumCharType.Enemy);
+            List<Character> characterList = new List<Character>();
+            characterList.Add(player);
+            characterList.Add(enemyA);
+            characterList.Add(enemyB);
+            characterList.Add(enemyC);
 
-            Character[] characterArray = new Character[4];
-            characterArray[0] = new Character("Player", 1, 3, 2, 1, true);
-            characterArray[1] = new Character("EnemyA", 1, 1, 1, 15, false);
-            characterArray[2] = new Character("EnemyB", 1, 1, 1, 10, false);
-            characterArray[3] = new Character("EnemyC", 1, 1, 1, 16, false);
+            characterList = characterList.OrderByDescending(x => x.speed).ToList();
 
-            characterArray = characterArray.OrderByDescending(x => x.speed).ToArray();
-
-            foreach(Character obj in characterArray)
+            foreach(Character obj in characterList)
             {
                 Console.WriteLine(obj.charName);
             }
@@ -33,36 +39,36 @@ namespace AulaPratica
 
             while (!gameOver)
             {
-                for (int i = 0; i < characterArray.Length; i++)
+                for (int i = 0; i < characterList.Count; i++)
                 {
-                    if (characterArray[i].isPlayer == true)
+                    if (characterList[i].charType == EnumCharType.Player)
                     {
-                        Console.WriteLine("Vez de: " + characterArray[i].charName);
+                        Console.WriteLine("Vez de: " + characterList[i].charName);
                         Console.WriteLine("Pressione Q para atacar o oponente mais próximo!");
-                        CheckPlayerSuperAtaque(characterArray[i]);
+                        CheckPlayerSuperAtaque(characterList[i]);
                         Console.WriteLine("Pressione outra tecla para passar a vez");
                         Console.Write("Seu comando: ");
                         actionSelected = Console.ReadLine();
                         if (actionSelected == "q" || actionSelected == "Q")
                         {
-                            characterArray[i].AttackCloserEnemy(characterArray);
+                            characterList[i].AttackCloserEnemy(characterList);
                         }
                         else if (actionSelected == "s" || actionSelected == "S")
                         {
-                            characterArray[i].SuperAttack(characterArray);
+                            characterList[i].SuperAttack(characterList);
                         }
                         else
                         {
-                            characterArray[i].PassTurn();
+                            characterList[i].PassTurn();
                         }
                         //Verificação de vitoria!
                         CheckIsGameOVer();
                         Console.WriteLine();
                         if (gameOver == true) { break; }
                     }
-                    else if (characterArray[i].isPlayer == false)
+                    else if (characterList[i].charType == EnumCharType.Enemy)
                     {
-                        characterArray[i].AttackPlayer(characterArray);
+                        characterList[i].AttackPlayer(characterList);
                     }
 
                     //Verificação de vitoria!
@@ -82,13 +88,13 @@ namespace AulaPratica
                 bool _isPlayerWinner = true;
                 bool _isEnemyWinner = true;
 
-                for (int i = 0; i < characterArray.Length; i++)
+                for (int i = 0; i < characterList.Count; i++)
                 {
-                    if (characterArray[i].charHP > 0 && characterArray[i].isPlayer == true)
+                    if (characterList[i].charHP > 0 && characterList[i].charType == EnumCharType.Player)
                     {
                         _isEnemyWinner = false;
                     }
-                    if (characterArray[i].charHP > 0 && characterArray[i].isPlayer == false)
+                    if (characterList[i].charHP > 0 && characterList[i].charType == EnumCharType.Enemy)
                     {
                         _isPlayerWinner = false;
                     }
