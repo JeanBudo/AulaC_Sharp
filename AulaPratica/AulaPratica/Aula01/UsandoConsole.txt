@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AulaPratica
+{
+
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string nomeCompleto = "Rodrigo";
+            Console.WriteLine(nomeCompleto);
+            Console.WriteLine("Escreva seu sobrenome: ");
+            nomeCompleto = nomeCompleto + " " + Console.ReadLine();
+            Console.Write("Seu nome completo é: ");
+            Console.WriteLine(nomeCompleto);
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+    }
+
+}
